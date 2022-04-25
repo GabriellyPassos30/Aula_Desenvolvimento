@@ -24,8 +24,8 @@ namespace RpgApi.Models
 
         public Arma Arma { get; set; }
         
-        //Adicionar sempre  -->
-        public List<PersonagemHabilidade> PersonagemHabilidades { get; set; }
+       
+        public List<PersonagemHabilidade> PersonagemHabilidades { get; set; } //Adicionar sempre  -->using System.Collections.Generic;
      
     }
 }

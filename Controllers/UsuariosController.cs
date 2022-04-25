@@ -2,8 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using RpgApi.Data;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using RpgApi.Models;
 using RpgApi.Utils;
+using System.Collections.Generic;
+using RpgApi.Models;
+using RpgApi.Models.Enuns;
+
 
 namespace RpgApi.Controllers
 {
@@ -39,7 +42,8 @@ namespace RpgApi.Controllers
             
             Criptografia.CriarPasswordHash(user.PasswordString, out byte[] hash, out byte[]salt);
             user.PasswordString = string.Empty;
-            user.PasswordHash = salt;
+            user.PasswordHash = hash;
+            user.PasswordSalt = salt;
             await _Context.Usuarios.AddAsync(user);
             await _Context.SaveChangesAsync();
 
@@ -51,30 +55,46 @@ namespace RpgApi.Controllers
         }
 
     }
-   
-   public static bool VerificarPasswordHash(string password, byte[] hash, byte[] salt)
-   {
-       using (var hmac = new System.Security.Cryptography.HMACSHA512(salt))
-       {
+    
 
-           var ComputeHash =
-           hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-           for (int i = 0; i < ComputeHash.Length; i++)
-           {
-               if (ComputeHash[i] != hash[i])
-               {
-                   return false;
-               }
-           }
-           return true;
+ [HttpPost("Autenticar")]
+
+ public async Task<IActionResult> AutenticarUsuario(Usuario credenciais)
+
+  {
+    try
+    {
+
+     Usuario usuario = await _Context.Usuarios
+     .FirstOrDefaultAsync(x => x.Username.ToLower().Equals(credenciais.Username.ToLower()));
+
+     if (usuario == null)
+     {
+         throw new System.Exception("Usuário não encontrado.");
      }
- }
+     else if (!Criptografia
+     .VerificarPasswordHash(credenciais.PasswordString, usuario.PasswordHash, usuario.PasswordSalt))
+     {
+      throw new System.Exception("Senha Incorreta");   
+     }
+     else
+     {
+      return Ok(usuario.Id);
+     }
+  
+    }
+    catch (System.Exception ex)
+    {
+        return BadRequest(ex.Message);
+    }
 
- 
-       
+
+   }
 
 
 
+
+    
     }
     
     }

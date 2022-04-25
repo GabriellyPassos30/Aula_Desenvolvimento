@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
+
 namespace RpgApi.Models
 
 {
@@ -8,13 +9,13 @@ namespace RpgApi.Models
     {
         public int PersonagemId{ get; set; } 
 
-        public Personagem Personagems { get; set; }
+        public Personagem Personagem { get; set; }
 
         public int HabilidadeId { get; set; }
 
-        public Habilidade Habilidades { get; set; }
+        public Habilidade Habilidade { get; set; }
 
-        //public List<PersonagemHabilidade> PersonagemHabilidades { get; set; }
+    
 
     }
 }
